@@ -25,16 +25,48 @@
 
 五份样卷实测：本 Skill 独立判档与官方档位**五档全中**。
 
-## 安装
+## 怎么用（给别人看的一段）
 
-把本仓库克隆为一个 skill 目录，放进 agent 的 skills 路径即可：
+Skill 不是远程服务，没有 API 可以被“调用”——它就是一个本地文件夹（`SKILL.md` + 素材）。别人要用，就是把本仓库**装进他自己 agent 的 skills 目录**，之后那个 agent 就会在对话里自动触发它。整件事只有两步：**装到 skills 目录 → 新开会话**。
+
+### 第一步：装到 skills 目录
+
+克隆到对应 agent 的 skills 路径（用 HTTPS，无需配置 SSH key）：
 
 ```bash
-# 用户级（所有项目可用）
-git clone git@github.com:wxyqx/essay-translation-grader.git ~/.zcode/skills/essay-translation-grader
+# ZCode（用户级，所有项目可用）
+git clone https://github.com/wxyqx/essay-translation-grader.git ~/.zcode/skills/essay-translation-grader
+
+# Claude Code（用户级）
+git clone https://github.com/wxyqx/essay-translation-grader.git ~/.claude/skills/essay-translation-grader
 ```
 
-装好后**新开一个会话**（skill 在会话初始化时被发现），之后提到"给这篇作文/翻译评分、批改、估分"就会自动触发。
+各 agent 的安装路径：
+
+| agent | 用户级（全局） | 项目级（仅当前仓库） |
+| --- | --- | --- |
+| ZCode | `~/.zcode/skills/<name>/` 或 `~/.agents/skills/<name>/` | `<项目>/.zcode/skills/<name>/` 或 `<项目>/.agents/skills/<name>/` |
+| Claude Code | `~/.claude/skills/<name>/` | `<项目>/.claude/skills/<name>/` |
+| Claude.ai（网页版） | 把整个仓库打包成 ZIP，在 Settings → Capabilities → Skills 里上传 | — |
+
+> 目录名（这里是 `essay-translation-grader`）必须和 `SKILL.md` 里的 `name` 字段一致，否则不生效。
+
+### 第二步：新开会话
+
+Skill 是在会话**初始化时**被扫描发现的，装完要**新开一个会话**（不是刷新当前对话）。
+
+### 怎么触发
+
+- **自动触发**：用户直接说“帮我看看这篇作文/翻译能不能过”“给这篇估个分”“批改一下”，agent 匹配到 `SKILL.md` 里 `description` 描述的语境就会自动加载。
+- **强制触发**：用斜杠命令显式点名，最稳：
+  ```
+  /skill essay-translation-grader 批改 D:\作文\我的作文.txt
+  ```
+  （部分客户端是 `/essay-translation-grader`，取决于其命令解析。）
+
+### 想一行命令装好？
+
+克隆方式已是最简。若希望别人确认后再装，也可把本仓库做成 agent 市场的插件包，但多数场景下“git clone 到 skills 目录”就够了。
 
 ## 目录结构
 
